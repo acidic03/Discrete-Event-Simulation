@@ -26,96 +26,101 @@ int readConfigFile(std::string fileName)
             if (name == "SEED")
             {
                 configFile >> value;
-                VARS.SEED = value;
-                printf("SEED value of %d\n", value);
+                SEED = value;
+                printf("Seed: %d  Value: %d\n", SEED, value);
                 valuesRead++;
             }
             else if (name == "INIT_TIME")
             {
                 configFile >> value;
-                VARS.INIT_TIME = value;
-                printf("INIT_TIME value of %d\n", value);
+                INIT_TIME = value;
+
                 valuesRead++;
             }
             else if (name == "FIN_TIME")
             {
                 configFile >> value;
-                VARS.FIN_TIME = value;
-                printf("FIN_TIME value of %d\n", value);
+                FIN_TIME = value;
+
                 valuesRead++;
             }
             else if (name == "ARRIVE_MIN")
             {
                 configFile >> value;
-                VARS.ARRIVE_MIN = value;
-                printf("ARRIVE_MIN value of %d\n", value);
+                ARRIVE_MIN = value;
+
                 valuesRead++;
             }
             else if (name == "ARRIVE_MAX")
             {
                 configFile >> value;
-                VARS.ARRIVE_MAX = value;
-                printf("ARRIVE_MAX value of %d\n", value);
+                ARRIVE_MAX = value;
+
                 valuesRead++;
             }
             else if (name == "QUIT_PROB")
             {
                 configFile >> value;
-                VARS.QUIT_PROB = value;
-                printf("QUIT_PROB value of %d\n", value);
+                QUIT_PROB = value;
+
                 valuesRead++;
             }
             else if (name == "CPU_MIN")
             {
                 configFile >> value;
-                VARS.CPU_MIN = value;
-                printf("CPU_MIN value of %d\n", value);
+                CPU_MIN = value;
+
                 valuesRead++;
             }
             else if (name == "CPU_MAX")
             {
                 configFile >> value;
-                VARS.CPU_MAX = value;
-                printf("CPU_MAX value of %d\n", value);
+                CPU_MAX = value;
+
                 valuesRead++;
             }
             else if (name == "DISK1_MIN")
             {
                 configFile >> value;
-                VARS.DISK1_MIN = value;
-                printf("DISK1_MIN value of %d\n", value);
+                DISK1_MIN = value;
+
                 valuesRead++;
             }
             else if (name == "DISK1_MAX")
             {
                 configFile >> value;
-                VARS.DISK1_MAX = value;
-                printf("DISK1_MAX value of %d\n", value);
+                DISK1_MAX = value;
+
                 valuesRead++;
             }
             else if (name == "DISK2_MIN")
             {
                 configFile >> value;
-                VARS.DISK2_MIN = value;
-                printf("DISK2_MIN value of %d\n", value);
+                DISK2_MIN = value;
+
                 valuesRead++;
             }
             else if (name == "DISK2_MAX")
             {
                 configFile >> value;
-                VARS.DISK2_MAX = value;
-                printf("DISK2_MAX value of %d\n", value);
+                DISK2_MAX = value;
+
                 valuesRead++;
             }
             else
             {
-                printf("unknow name/name in config file...\n");
+                printf("unknown name/value in config file...\n");
                 exit(1);
             }
             
         }
     }
-    
+    else
+    {
+        printf("Unable to read %s\n", fileName.c_str());
+    }
+
+
 
     configFile.close();
     return valuesRead == REQUIRED_NUM_OF_VARS ? 1 : 0;
