@@ -1,6 +1,6 @@
 /*
     - Read values from the config file
-    - Store events in a priority queue and loop untill I reach
+    - Store events in a priority queue and loop until I reach
     the simulation finished event
     -
 */
@@ -14,18 +14,13 @@ int main()
 {
     // read values from config file and only continue if the file was
     // read successfully
-    if (readConfigFile("config.txt"))
+    if (readConfigFile("config1.txt"))
     {
         printf("success..\n");
-        printf("SEED = %d\n", VARS.SEED);
+        // main priority queue to store the events
+
+
     }
-    else
-    {
-        printf("failure..\n");
-    }
-    
-    // main priority queue to store the events
-    
 
     return 0;
 }
