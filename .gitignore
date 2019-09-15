@@ -3,4 +3,4 @@
 /cmake-build-debug
 a.out
 Makefile
-CMakeLists.txt
+.DS_Store

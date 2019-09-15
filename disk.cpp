@@ -6,26 +6,29 @@
 
 namespace mc
 {
-    Disk::Disk(std::priority_queue<mc::Globals::Event, std::vector<mc::Globals::Event>, mc::Globals::CompareEvents>* eventsPQ, DiskType disk)
+    Disk::Disk(std::priority_queue<mc::Globals::Event, std::vector<mc::Globals::Event>, mc::Globals::CompareEvents>* eventsPQ, DiskType disk, std::ofstream &outputFile) : m_outputFile(outputFile)
     {
         this->m_eventsPQ = eventsPQ;
         this->m_diskType = disk;
+
     }
 
     void Disk::handleArrival(mc::Globals::Event e)
     {
+        if (CREATE_LOG_FILE)
+            m_outputFile << e.time << "," << e.pid << ",Begin Disk " << m_diskType << " I/O\n";
         if (DEBUG_MESSAGES)
             printf("At time %d, process %d begins I/O on Disk %d\n", e.time, e.pid, m_diskType);
 
         // currently working on a event or events are waiting to be processed
-        if (m_occupied || !m_queue.empty())
+        // add event to queue
+        if (!m_occupied && m_queue.empty())
+        {
+            beginProcess(e);
+        }
+        else
         {
             queueProcess(e);
-        }
-        else if (!m_occupied && m_queue.empty())
-        {
-            // begin working on event now
-            beginProcess(e);
         }
     }
 
@@ -43,12 +46,12 @@ namespace mc
 
         switch (e.type)
         {
-            case mc::Globals::DISK1_ARRIVAL:
-                newEvent.type = mc::Globals::DISK1_FINISH;
+            case mc::Globals::PROCESS_ARRIVE_DISK1:
+                newEvent.type = mc::Globals::PROCESS_FINISH_DISK1;
                 newEvent.time = mc::Globals::currentTime + mc::Globals::randomInt(mc::Globals::DISK1_MIN, mc::Globals::DISK1_MAX);
                 break;
-            case mc::Globals::DISK2_ARRIVAL:
-                newEvent.type = mc::Globals::DISK2_FINISH;
+            case mc::Globals::PROCESS_ARRIVE_DISK2:
+                newEvent.type = mc::Globals::PROCESS_FINISH_DISK2;
                 newEvent.time = mc::Globals::currentTime + mc::Globals::randomInt(mc::Globals::DISK2_MIN, mc::Globals::DISK2_MAX);
                 break;
             default:
@@ -60,26 +63,21 @@ namespace mc
     void Disk::handleExit(mc::Globals::Event e)
     {
         // TODO: determine the quit probability or send back to cpu
+        if (CREATE_LOG_FILE)
+            m_outputFile << e.time << "," << e.pid << ",Finish Disk " << m_diskType << " I/O\n";
         if (DEBUG_MESSAGES)
             printf("At time %d, process %d finishes I/O on Disk %d\n", e.time, e.pid, m_diskType);
-        m_occupied = 0;
 
         // check for waiting events in the queue
         if (!m_queue.empty())
         {
             mc::Globals::Event temp = m_queue.front();
-            // need to check which disk the event belongs to
-            switch (m_diskType)
-            {
-                case DiskType::DISK_1:
-                    temp.type = mc::Globals::DISK1_ARRIVAL;
-                    break;
-                case DiskType::DISK_2:
-                    temp.type = mc::Globals::DISK2_ARRIVAL;
-                    break;
-            }
-            m_occupied = 1;
-            m_eventsPQ->push(temp);
+            m_queue.pop();
+            beginProcess(temp);
+        }
+        else
+        {
+            m_occupied = 0;
         }
     }
 

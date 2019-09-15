@@ -6,38 +6,40 @@
 
 namespace mc
 {
-    Cpu::Cpu(std::priority_queue<mc::Globals::Event, std::vector<mc::Globals::Event>, mc::Globals::CompareEvents>* eventsPQ)
+    Cpu::Cpu(std::priority_queue<mc::Globals::Event, std::vector<mc::Globals::Event>, mc::Globals::CompareEvents>* eventsPQ, std::ofstream &outputFile) : m_outputFile(outputFile)
     {
         this->m_eventsPQ = eventsPQ;
+        m_occupied = 0;
     }
 
     void Cpu::handleArrival(mc::Globals::Event e)
     {
         // add event to queue
-        if (m_occupied || !m_queue.empty())
+        if (!m_occupied && m_queue.empty())
+        {
+            beginProcess(e);
+        }
+        else
         {
             queueProcess(e);
         }
-        else if (!m_occupied && m_queue.empty())
-        {
-            // begin working on event now
-            beginProcess(e);
-        }
-
     }
 
 // TODO: redo function
     void Cpu::handleExit(mc::Globals::Event e, Disk* disk1, Disk* disk2)
     {
+        if (CREATE_LOG_FILE)
+            m_outputFile << e.time << "," << e.pid << ",Exit CPU\n";
         if (DEBUG_MESSAGES)
             printf("At time %d, process %d exits the CPU\n", e.time, e.pid);
-        m_occupied = 0;
+
         // begin setup for temp event
         mc::Globals::Event tempEvent = {
                 .pid = e.pid
         };
 
-        if (((double)rand() / RAND_MAX) < mc::Globals::QUIT_PROB)
+        double randQuitProb = (double)rand() / (double)RAND_MAX;
+        if (randQuitProb < mc::Globals::QUIT_PROB)
         {
             // exit event
             tempEvent.type = mc::Globals::PROCESS_EXIT_SYSTEM;
@@ -52,26 +54,28 @@ namespace mc
 
                 if ( ((double)rand() / RAND_MAX) < 0.5)
                 {
-                    // disk 1
-                    tempEvent.type = mc::Globals::DISK1_ARRIVAL;
+                    // choose disk 1
+                    tempEvent.type = mc::Globals::PROCESS_ARRIVE_DISK1;
                     tempEvent.time = e.time;
                 }
                 else
                 {
-                    // disk 2
-                    tempEvent.type = mc::Globals::DISK2_ARRIVAL;
+                    // choose disk 2
+                    tempEvent.type = mc::Globals::PROCESS_ARRIVE_DISK2;
                     tempEvent.time = e.time;
                 }
 
             }
+            // disk 1 queues is shorter
             else if (disk1->getQueue()->size() < disk2->getQueue()->size())
             {
-                tempEvent.type = mc::Globals::DISK1_ARRIVAL;
+                tempEvent.type = mc::Globals::PROCESS_ARRIVE_DISK1;
                 tempEvent.time = e.time;
             }
+            // disk 2 queues is shorter
             else
             {
-                tempEvent.type = mc::Globals::DISK2_ARRIVAL;
+                tempEvent.type = mc::Globals::PROCESS_ARRIVE_DISK2;
                 tempEvent.time = e.time;
             }
         }
@@ -81,14 +85,15 @@ namespace mc
         // there are events in the CPU queue that need to be processed
         if (!m_queue.empty())
         {
+            m_occupied = 1;
             // remove event from cpu queue
             mc::Globals::Event temp = m_queue.front();
             m_queue.pop();
-
-            // add event to priority queue for processing
-            temp.type = mc::Globals::PROCESS_ARRIVE_CPU;
-            m_occupied = 1;
-            m_eventsPQ->push(temp);
+            beginProcess(temp);
+        }
+        else
+        {
+            m_occupied = 0;
         }
 
     }
@@ -100,6 +105,8 @@ namespace mc
 
     void Cpu::beginProcess(mc::Globals::Event e)
     {
+        if (CREATE_LOG_FILE)
+            m_outputFile << e.time << "," << e.pid << ",Enter CPU\n";
         if (DEBUG_MESSAGES)
             printf("At time %d, process %d enters CPU\n", e.time, e.pid);
         m_occupied = 1;

@@ -8,6 +8,7 @@
 #include <queue>
 
 #include "globals.h"
+#include <fstream>
 
 namespace mc
 {
@@ -20,6 +21,10 @@ namespace mc
     protected:
         std::queue<mc::Globals::Event> m_queue;
         std::priority_queue<mc::Globals::Event, std::vector<mc::Globals::Event>, mc::Globals::CompareEvents>* m_eventsPQ;
+
+        // reference to outputFile in main.cpp
+        std::ofstream &m_outputFile;
+
         int m_totalUseTime;
         // is used to tell which disk is which when there are multiple
         DiskType m_diskType;
@@ -31,7 +36,7 @@ namespace mc
         void beginProcess(mc::Globals::Event e);
 
     public:
-        Disk(std::priority_queue<mc::Globals::Event, std::vector<mc::Globals::Event>, mc::Globals::CompareEvents>* eventsPQ, DiskType disk);
+        Disk(std::priority_queue<mc::Globals::Event, std::vector<mc::Globals::Event>, mc::Globals::CompareEvents>* eventsPQ, DiskType disk, std::ofstream &outputFile);
         void handleArrival(mc::Globals::Event e);
         void handleExit(mc::Globals::Event e);
         int isOccupied();

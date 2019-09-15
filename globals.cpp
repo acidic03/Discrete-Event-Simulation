@@ -22,7 +22,7 @@ namespace mc
         int DISK2_MAX = 0;
 
         int currentTime = 0;
-        unsigned int pidCounter = 0;
+        unsigned int pidCounter = 1;
 
         int randomInt(int min, int max)
         {

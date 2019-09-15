@@ -2,6 +2,7 @@
 #define CONST_H
 
 #define DEBUG_MESSAGES 1
+#define CREATE_LOG_FILE 1
 
 #include <stdlib.h>
 
@@ -42,10 +43,10 @@ namespace mc
             PROCESS_ARRIVE_CPU,
             PROCESS_FINISH_CPU,
             PROCESS_EXIT_SYSTEM,
-            DISK1_ARRIVAL,
-            DISK1_FINISH,
-            DISK2_ARRIVAL,
-            DISK2_FINISH,
+            PROCESS_ARRIVE_DISK1,
+            PROCESS_FINISH_DISK1,
+            PROCESS_ARRIVE_DISK2,
+            PROCESS_FINISH_DISK2,
             SIMULATION_FINISHED
         };
 
