@@ -57,52 +57,50 @@ int main()
             disk2.update();
             totalNumberOfUpdates++;
         }
+        // close the log file stream
+        outputFile.close();
+
+        cpu.end();
+        disk1.end();
+        disk2.end();
+
+        avgQueueSize = (double)totalQueueSize / totalNumberOfUpdates;
+
+        // Create the STAT file
+        outputFile.open("stat.txt");
+
+        outputFile << "----------------Queues----------------\n";
+        outputFile << "Average size of CPU Queue: " << cpu. m_avgQueueSize << '\n';
+        outputFile << "Max size of CPU Queue: " << cpu.m_maxQueueSize << '\n';
+        outputFile << "Average size of DISK 1 Queue: " << disk1.m_avgQueueSize << '\n';
+        outputFile << "Max size of DISK 1 Queue: " << disk1.m_maxQueueSize << '\n';
+        outputFile << "Average size of DISK 2 Queue: " << disk2.m_avgQueueSize << '\n';
+        outputFile << "Max size of DISK 2 Queue: " << disk2.m_maxQueueSize << '\n';
+        outputFile << "Average size of Event Queue: " << avgQueueSize << '\n';
+        outputFile << "Max size of Event Queue: " << maxQueueSize << '\n';
+
+        outputFile << "\n----------------Utilization----------------\n";
+        outputFile << "Utilization of CPU: " << cpu.m_util << '\n';
+        outputFile << "Utilization of Disk 1: " << disk1.m_util << '\n';
+        outputFile << "Utilization of Disk 2: " << disk2.m_util << '\n';
+
+        outputFile << "\n----------------Response Time----------------\n";
+        outputFile << "CPU max response time: " << cpu.m_maxResponseTime << '\n';
+        outputFile << "DISK 1 max response time: " << disk1.m_maxResponseTime << '\n';
+        outputFile << "DISK 2 max response time: " << disk2.m_maxResponseTime << '\n';
+        outputFile << "CPU average response time: " << cpu.m_avgResponseTime << '\n';
+        outputFile << "DISK 1 average response time: " << disk1.m_avgResponseTime << '\n';
+        outputFile << "DISK 2 average response time: " << disk2.m_avgResponseTime << '\n';
+
+        outputFile << "\n----------------Throughput----------------\n";
+        outputFile << "Throughput of CPU: " << cpu.m_throughput << '\n';
+        outputFile << "Throughput of DISK 1: " << disk1.m_throughput << '\n';
+        outputFile << "Throughput of DISK 2: " << disk2.m_throughput << '\n';
+
+        outputFile.close();
+
+        puts("Simulation ran successfully");
     }
-
-    // close the log file stream
-    outputFile.close();
-
-    cpu.end();
-    disk1.end();
-    disk2.end();
-
-    avgQueueSize = (double)totalQueueSize / totalNumberOfUpdates;
-
-    // Create the STAT file
-    outputFile.open("stat.txt");
-
-    outputFile << "----------------Queues----------------\n";
-    outputFile << "Average size of CPU Queue: " << cpu. m_avgQueueSize << '\n';
-    outputFile << "Max size of CPU Queue: " << cpu.m_maxQueueSize << '\n';
-    outputFile << "Average size of DISK 1 Queue: " << disk1.m_avgQueueSize << '\n';
-    outputFile << "Max size of DISK 1 Queue: " << disk1.m_maxQueueSize << '\n';
-    outputFile << "Average size of DISK 2 Queue: " << disk2.m_avgQueueSize << '\n';
-    outputFile << "Max size of DISK 2 Queue: " << disk2.m_maxQueueSize << '\n';
-    outputFile << "Average size of Event Queue: " << avgQueueSize << '\n';
-    outputFile << "Max size of Event Queue: " << maxQueueSize << '\n';
-
-    outputFile << "\n----------------Utilization----------------\n";
-    outputFile << "Utilization of CPU: " << cpu.m_util << '\n';
-    outputFile << "Utilization of Disk 1: " << disk1.m_util << '\n';
-    outputFile << "Utilization of Disk 2: " << disk2.m_util << '\n';
-
-    outputFile << "\n----------------Response Time----------------\n";
-    outputFile << "CPU max response time: " << cpu.m_maxResponseTime << '\n';
-    outputFile << "DISK 1 max response time: " << disk1.m_maxResponseTime << '\n';
-    outputFile << "DISK 2 max response time: " << disk2.m_maxResponseTime << '\n';
-    outputFile << "CPU average response time: " << cpu.m_avgResponseTime << '\n';
-    outputFile << "DISK 1 average response time: " << disk1.m_avgResponseTime << '\n';
-    outputFile << "DISK 2 average response time: " << disk2.m_avgResponseTime << '\n';
-
-    outputFile << "\n----------------Throughput----------------\n";
-    outputFile << "Throughput of CPU: " << cpu.m_throughput << '\n';
-    outputFile << "Throughput of DISK 1: " << disk1.m_throughput << '\n';
-    outputFile << "Throughput of DISK 2: " << disk2.m_throughput << '\n';
-
-    outputFile.close();
-
-    puts("Simulation ran successfully");
-
     return 0;
 }
 
