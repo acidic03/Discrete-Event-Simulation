@@ -51,9 +51,9 @@ namespace mc
         };
 
         typedef struct {
-            int time = 0;
-            int received = 0;
-            unsigned int pid = 0;
+            int time;
+            int received;
+            unsigned int pid;
             EVENT_TYPE type;
         } Event;
 

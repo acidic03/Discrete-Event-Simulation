@@ -110,17 +110,15 @@ void initSimulation()
     outputFile.open("log.csv");
     outputFile << "Time,PID,Event\n";
 
-    mc::Globals::Event arrivalEvent = {
-            .time = mc::Globals::INIT_TIME,
-            .pid = mc::Globals::pidCounter,
-            .type = mc::Globals::PROCESS_ARRIVAL
-    };
+    mc::Globals::Event arrivalEvent;
+    arrivalEvent.time = mc::Globals::INIT_TIME;
+    arrivalEvent.pid = mc::Globals::pidCounter;
+    arrivalEvent.type = mc::Globals::PROCESS_ARRIVAL;
 
-    mc::Globals::Event finishedEvent = {
-            .time = mc::Globals::FIN_TIME,
-            .pid = mc::Globals::pidCounter++,
-            .type = mc::Globals::SIMULATION_FINISHED
-    };
+    mc::Globals::Event finishedEvent;
+    finishedEvent.time = mc::Globals::FIN_TIME;
+    finishedEvent.pid = mc::Globals::pidCounter++;
+    finishedEvent.type = mc::Globals::SIMULATION_FINISHED;
 
     eventsPQ.push(arrivalEvent);
     eventsPQ.push(finishedEvent);
@@ -172,21 +170,21 @@ void processArrival(mc::Globals::Event e)
     if (DEBUG_MESSAGES)
         printf("At time %d, process %d enters system\n", e.time, e.pid);
 
-    mc::Globals::Event newEvent = {
-            .time = mc::Globals::currentTime,
-            .type = mc::Globals::PROCESS_ARRIVE_CPU,
-            .pid = e.pid
-    };
+    mc::Globals::Event newEvent;
+    newEvent.time = mc::Globals::currentTime;
+    newEvent.pid = e.pid;
+    newEvent.type = mc::Globals::PROCESS_ARRIVE_CPU;
+
     eventsPQ.push(newEvent);
 
     // the new time to use for the new event
     int nt = mc::Globals::randomInt(mc::Globals::ARRIVE_MIN, mc::Globals::ARRIVE_MAX) + mc::Globals::currentTime;
 
     // keep adding new events
-    mc::Globals::Event temp = {
-            .type = mc::Globals::PROCESS_ARRIVAL,
-            .time = nt,
-            .pid = mc::Globals::pidCounter++
-    };
+    mc::Globals::Event temp;
+    temp.time = nt;
+    temp.pid = mc::Globals::pidCounter++;
+    temp.type = mc::Globals::PROCESS_ARRIVAL;
+
     eventsPQ.push(temp);
 }

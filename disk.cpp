@@ -46,10 +46,9 @@ namespace mc
     void Disk::beginProcess(mc::Globals::Event e)
     {
         m_occupied = 1;
-        mc::Globals::Event diskFinish = {
-                .pid = e.pid,
-                .received = mc::Globals::currentTime
-        };
+        mc::Globals::Event diskFinish;
+        diskFinish.pid = e.pid;
+        diskFinish.received = mc::Globals::currentTime;
 
         // find the disk the event belongs to then
         // determine how long the disk needs to run
@@ -83,11 +82,10 @@ namespace mc
         if ((e.time - e.received) > m_maxResponseTime)
             m_maxResponseTime = (e.time - e.received);
 
-        mc::Globals::Event newEvent = {
-                .type = mc::Globals::PROCESS_ARRIVE_CPU,
-                .pid = e.pid,
-                .time = mc::Globals::currentTime
-        };
+        mc::Globals::Event newEvent ;
+        newEvent.type = mc::Globals::PROCESS_ARRIVE_CPU;
+        newEvent.pid = e.pid;
+        newEvent.time = mc::Globals::currentTime;
 
         m_timeInUse += mc::Globals::currentTime - e.received;
 

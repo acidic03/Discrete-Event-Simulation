@@ -38,9 +38,8 @@ namespace mc
             printf("At time %d, process %d exits the CPU\n", e.time, e.pid);
 
         // begin setup for temp event
-        mc::Globals::Event tempEvent = {
-                .pid = e.pid
-        };
+        mc::Globals::Event tempEvent;
+        tempEvent.pid = e.pid;
 
         m_totalEventsHandled++;
         m_totalResponseTime += (e.time - e.received);
@@ -116,12 +115,12 @@ namespace mc
             printf("At time %d, process %d enters CPU\n", e.time, e.pid);
         m_occupied = 1;
 
-        mc::Globals::Event newEvent = {
-                .type = mc::Globals::PROCESS_FINISH_CPU,
-                .time = mc::Globals::randomInt(mc::Globals::CPU_MIN, mc::Globals::CPU_MAX) + mc::Globals::currentTime,
-                .received = mc::Globals::currentTime,
-                .pid = e.pid
-        };
+        mc::Globals::Event newEvent;
+        newEvent.type = mc::Globals::PROCESS_FINISH_CPU;
+        newEvent.time = mc::Globals::randomInt(mc::Globals::CPU_MIN, mc::Globals::CPU_MAX) + mc::Globals::currentTime;
+        newEvent.received = mc::Globals::currentTime;
+        newEvent.pid = e.pid;
+
         m_eventsPQ->push(newEvent);
     }
 
