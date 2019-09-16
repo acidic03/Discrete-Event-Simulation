@@ -14,6 +14,10 @@ namespace mc
 
     void Cpu::handleArrival(mc::Globals::Event e)
     {
+        // keep track of the max size the queue reaches during the simulation
+        if (m_maxQueueSize < m_queue.size())
+            m_maxQueueSize = m_queue.size();
+
         // add event to queue
         if (!m_occupied && m_queue.empty())
         {
@@ -21,7 +25,7 @@ namespace mc
         }
         else
         {
-            queueProcess(e);
+            m_queue.push(e);
         }
     }
 
@@ -38,6 +42,13 @@ namespace mc
                 .pid = e.pid
         };
 
+        m_totalEventsHandled++;
+        m_totalResponseTime += (e.time - e.received);
+        if ((e.time - e.received) > m_maxResponseTime)
+            m_maxResponseTime = (e.time - e.received);
+
+        m_timeInUse += mc::Globals::currentTime - e.received;
+
         double randQuitProb = (double)rand() / (double)RAND_MAX;
         if (randQuitProb < mc::Globals::QUIT_PROB)
         {
@@ -51,7 +62,6 @@ namespace mc
             if ((!disk1->isOccupied() && disk1->getQueue()->empty()) || (!disk2->isOccupied() && disk2->getQueue()->empty()))
             {
                 // 50/50 chance to choose disk 1 or disk 2 if both are empty and not occupied
-
                 if ( ((double)rand() / RAND_MAX) < 0.5)
                 {
                     // choose disk 1
@@ -98,11 +108,6 @@ namespace mc
 
     }
 
-    void Cpu::queueProcess(mc::Globals::Event e)
-    {
-        m_queue.push(e);
-    }
-
     void Cpu::beginProcess(mc::Globals::Event e)
     {
         if (CREATE_LOG_FILE)
@@ -110,20 +115,27 @@ namespace mc
         if (DEBUG_MESSAGES)
             printf("At time %d, process %d enters CPU\n", e.time, e.pid);
         m_occupied = 1;
+
         mc::Globals::Event newEvent = {
                 .type = mc::Globals::PROCESS_FINISH_CPU,
                 .time = mc::Globals::randomInt(mc::Globals::CPU_MIN, mc::Globals::CPU_MAX) + mc::Globals::currentTime,
+                .received = mc::Globals::currentTime,
                 .pid = e.pid
         };
         m_eventsPQ->push(newEvent);
     }
 
-    std::queue<mc::Globals::Event>* Cpu::getQueue() {
-        return &m_queue;
+    void Cpu::update()
+    {
+        m_totalNumberOfUpdates++;
+        m_totalQueueSize += m_queue.size();
     }
 
-    int Cpu::isOccupied()
+    void Cpu::end()
     {
-        return m_occupied;
+        m_avgQueueSize = (double)m_totalQueueSize / m_totalNumberOfUpdates;
+        m_util = (double)m_timeInUse/mc::Globals::FIN_TIME;
+        m_throughput = (double)m_totalEventsHandled/mc::Globals::FIN_TIME;
+        m_avgResponseTime = (double)m_totalResponseTime/(m_totalEventsHandled+1);
     }
 }

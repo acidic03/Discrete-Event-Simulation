@@ -24,17 +24,30 @@ namespace mc
 
         int m_occupied;
 
-        // adds a Event to the queue when the cpu is busy
-        void queueProcess(mc::Globals::Event e);
+        int m_totalQueueSize;
+        int m_totalResponseTime;
+
+        int m_totalEventsHandled;
+        int m_totalNumberOfUpdates;
+        int m_timeInUse;
+
         // begins working on a Event when the cpu is free
         void beginProcess(mc::Globals::Event e);
     public:
         Cpu(std::priority_queue<mc::Globals::Event, std::vector<mc::Globals::Event>, mc::Globals::CompareEvents>* eventsPQ, std::ofstream &outputFile);
         void handleArrival(mc::Globals::Event e);
         void handleExit(mc::Globals::Event e, mc::Disk* disk1, mc::Disk* disk2);
-        int isOccupied();
 
-        std::queue<mc::Globals::Event>* getQueue(void);
+        void update();
+        // saves the values for the STAT file once simulation is completed
+        void end();
+
+        float m_avgQueueSize;
+        float m_avgResponseTime;
+        int m_maxResponseTime;
+        int m_maxQueueSize;
+        float m_util;
+        float m_throughput;
     };
 }
 

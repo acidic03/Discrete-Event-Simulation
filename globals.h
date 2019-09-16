@@ -1,7 +1,7 @@
 #ifndef CONST_H
 #define CONST_H
 
-#define DEBUG_MESSAGES 1
+#define DEBUG_MESSAGES 0
 #define CREATE_LOG_FILE 1
 
 #include <stdlib.h>
@@ -52,6 +52,7 @@ namespace mc
 
         typedef struct {
             int time = 0;
+            int received = 0;
             unsigned int pid = 0;
             EVENT_TYPE type;
         } Event;
